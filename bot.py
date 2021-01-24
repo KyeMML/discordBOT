@@ -8,6 +8,7 @@ import controller
 from controller import excelDB 
 
 import secret_stuff
+from secret_stuff import clientID
 
 client = commands.Bot(command_prefix=">")
 
@@ -123,12 +124,13 @@ async def stonks(ctx):
 # EXCHANGE
 # ------------------------------------------------
 
+#will need to connect these to DB
 available_stonks = ['CSL']
 stonkPrices = {'CSL':100}
 
 # user makes an order (buy)
 @client.command()
-async def buy(ctx):
+async def buy(ctx, *args, **kwargs): # IMPROVE HERE<<<<<<, replace with specific params
     #get user ID
     myID = str(ctx.message.author.id) 
     
@@ -140,12 +142,15 @@ async def buy(ctx):
     # your_wallet = excelDB.readDB(myID, 'find_wallet')
     wallet_test = 100
 
-    #check stock to buy is available
+    print(params)
+
+    #check applicable number of params
     if len(params)>0:
+        #check stock to buy is available
         if params[0] in available_stonks:
             #reduce wallet by (stock price * number of stocks purchased)
-            if (wallet_test - (stonkPrices[params[0]]*params[1])) > 0:
-                wallet_test-=(stonkPrices[params[0]]*params[1])
+            if (wallet_test-(stonkPrices[params[0]]*int(params[1]))) >= 0:
+                wallet_test-=(stonkPrices[params[0]]*int(params[1]))
 
                 # once confirmed for execution:
                 # order is compared to current listings
@@ -154,12 +159,11 @@ async def buy(ctx):
 
                     # listed until volume is depleted by price matches
 
-                await ctx.send('purchased',params[0],'for',stonkPrices[params[0]])
+                await ctx.send('purchased '+str(params[0])+' for $'+str(stonkPrices[params[0]]))
             else:
+                print('insufficient funds')
                 await ctx.send('insufficient funds')
                 return 
-             
-    # await ctx.send('purchased',stonkName,'for',stonkPrice)
 # ------------------------------------------------
 
-client.run(secret_stuff.clientID)
+client.run(secret_stuff.clientID())
