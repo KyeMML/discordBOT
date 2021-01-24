@@ -59,7 +59,7 @@ async def myID(ctx):
 @client.command()
 async def myWallet(ctx):
     #get user ID
-    myID = str(ctx.message.author.id)
+    myID = str(ctx.message.author.id) 
     your_wallet = excelDB.readDB(myID, 'find_wallet')
     await ctx.send(your_wallet)
 
@@ -104,8 +104,6 @@ async def signUp(ctx):
 
 
 
-#user makes an order
-
 # ------------------------------------------------
 # STONKS
 # ------------------------------------------------
@@ -119,11 +117,49 @@ async def stonks(ctx):
         await ctx.send('- '+stonk)
 # ------------------------------------------------
 
-# order is compared to current listings
 
-# if volume is not completely removed by current listings then it is listed
 
-# listed until volume is depleted by price matches
+# ------------------------------------------------
+# EXCHANGE
+# ------------------------------------------------
 
+available_stonks = ['CSL']
+stonkPrices = {'CSL':100}
+
+# user makes an order (buy)
+@client.command()
+async def buy(ctx):
+    #get user ID
+    myID = str(ctx.message.author.id) 
+    
+    #get user params
+    local_values = locals().values()
+    params = list(list(local_values)[1])
+
+    #money available
+    # your_wallet = excelDB.readDB(myID, 'find_wallet')
+    wallet_test = 100
+
+    #check stock to buy is available
+    if len(params)>0:
+        if params[0] in available_stonks:
+            #reduce wallet by (stock price * number of stocks purchased)
+            if (wallet_test - (stonkPrices[params[0]]*params[1])) > 0:
+                wallet_test-=(stonkPrices[params[0]]*params[1])
+
+                # once confirmed for execution:
+                # order is compared to current listings
+
+                    # if volume is not completely removed by current listings then it is listed
+
+                    # listed until volume is depleted by price matches
+
+                await ctx.send('purchased',params[0],'for',stonkPrices[params[0]])
+            else:
+                await ctx.send('insufficient funds')
+                return 
+             
+    # await ctx.send('purchased',stonkName,'for',stonkPrice)
+# ------------------------------------------------
 
 client.run(secret_stuff.clientID)
