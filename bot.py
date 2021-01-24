@@ -8,6 +8,7 @@ import controller
 from controller import excelDB 
 
 import secret_stuff
+from secret_stuff import clientID
 
 client = commands.Bot(command_prefix=">")
 
@@ -59,7 +60,7 @@ async def myID(ctx):
 @client.command()
 async def myWallet(ctx):
     #get user ID
-    myID = str(ctx.message.author.id)
+    myID = str(ctx.message.author.id) 
     your_wallet = excelDB.readDB(myID, 'find_wallet')
     await ctx.send(your_wallet)
 
@@ -103,10 +104,10 @@ async def signUp(ctx):
 
 
 
+
 # ------------------------------------------------
 # STONKS
 # ------------------------------------------------
-motto = "stonks only go up!"
 current_stonks = ['Budget Burials (Ticker Symbol: BB)', 'Crack Limited (Ticker Symbol: CL)', 'Burger Fat Friends (Ticker Symbol: BFF)']
 stonk_tickers = ['BB', 'CL', 'FBF']
 @client.command()
@@ -118,4 +119,51 @@ async def stonks(ctx):
 # ------------------------------------------------
 
 
-client.run(secret_stuff.clientID)
+
+# ------------------------------------------------
+# EXCHANGE
+# ------------------------------------------------
+
+#will need to connect these to DB
+available_stonks = ['CSL']
+stonkPrices = {'CSL':100}
+
+# user makes an order (buy)
+@client.command()
+async def buy(ctx, *args, **kwargs): # IMPROVE HERE<<<<<<, replace with specific params
+    #get user ID
+    myID = str(ctx.message.author.id) 
+    
+    #get user params
+    local_values = locals().values()
+    params = list(list(local_values)[1])
+
+    #money available
+    # your_wallet = excelDB.readDB(myID, 'find_wallet')
+    wallet_test = 100
+
+    print(params)
+
+    #check applicable number of params
+    if len(params)>0:
+        #check stock to buy is available
+        if params[0] in available_stonks:
+            #reduce wallet by (stock price * number of stocks purchased)
+            if (wallet_test-(stonkPrices[params[0]]*int(params[1]))) >= 0:
+                wallet_test-=(stonkPrices[params[0]]*int(params[1]))
+
+                # once confirmed for execution:
+                # order is compared to current listings
+
+                    # if volume is not completely removed by current listings then it is listed
+
+                    # listed until volume is depleted by price matches
+
+                await ctx.send('purchased '+str(params[0])+' for $'+str(stonkPrices[params[0]]))
+            else:
+                print('insufficient funds')
+                await ctx.send('insufficient funds')
+                return 
+# ------------------------------------------------
+
+client.run(secret_stuff.clientID())
