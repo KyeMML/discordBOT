@@ -103,10 +103,12 @@ async def signUp(ctx):
 
 
 
+
+#user makes an order
+
 # ------------------------------------------------
 # STONKS
 # ------------------------------------------------
-motto = "stonks only go up!"
 current_stonks = ['Budget Burials (Ticker Symbol: BB)', 'Crack Limited (Ticker Symbol: CL)', 'Burger Fat Friends (Ticker Symbol: BFF)']
 stonk_tickers = ['BB', 'CL', 'FBF']
 @client.command()
@@ -116,6 +118,12 @@ async def stonks(ctx):
     for stonk in current_stonks:
         await ctx.send('- '+stonk)
 # ------------------------------------------------
+
+# order is compared to current listings
+
+# if volume is not completely removed by current listings then it is listed
+
+# listed until volume is depleted by price matches
 
 
 client.run(secret_stuff.clientID)
